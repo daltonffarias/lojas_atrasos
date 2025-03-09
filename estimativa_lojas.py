@@ -6,7 +6,7 @@ import seaborn as sns
 
 # Função para carregar os dados do GitHub
 def load_data():
-    url = "https://raw.githubusercontent.com/seu_usuario/seu_repositorio/seu_arquivo.csv"
+    url = "https://github.com/daltonffarias/lojas_atrasos/blob/main/inadimplencia_lojas.csv"
     data = pd.read_csv(url)
     return data
 
