@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 from sklearn.linear_model import LinearRegression
 from datetime import datetime, timedelta
 
@@ -17,7 +18,8 @@ st.title('Análise de Inadimplência')
 
 # Exibir dados históricos
 st.subheader('Histórico de Inadimplência')
-st.line_chart(df.set_index('Data'))
+fig_hist = px.line(df, x='Data', y='Inadimplência', markers=True, title='Histórico de Inadimplência')
+st.plotly_chart(fig_hist)
 
 # Estimativa da Inadimplência Futura
 st.subheader('Estimativa da Inadimplência Futura')
@@ -35,30 +37,21 @@ future_predictions = modelo.predict(X_future)
 
 future_df = pd.DataFrame({'Data': future_dates, 'Inadimplência Estimada': future_predictions})
 
-# Melhor visualização com Matplotlib
-fig, ax = plt.subplots()
-ax.plot(df['Data'], df['Inadimplência'], marker='o', label='Histórico', linestyle='-')
-ax.plot(future_df['Data'], future_df['Inadimplência Estimada'], marker='o', linestyle='--', color='red', label='Previsão')
-ax.set_xlabel('Data')
-ax.set_ylabel('Inadimplência')
-ax.set_title('Previsão de Inadimplência')
-ax.legend()
-st.pyplot(fig)
+# Gráfico interativo com Plotly
+fig_forecast = go.Figure()
+fig_forecast.add_trace(go.Scatter(x=df['Data'], y=df['Inadimplência'], mode='lines+markers', name='Histórico'))
+fig_forecast.add_trace(go.Scatter(x=future_df['Data'], y=future_df['Inadimplência Estimada'], mode='lines+markers', name='Previsão', line=dict(dash='dash', color='red')))
+fig_forecast.update_layout(title='Previsão de Inadimplência', xaxis_title='Data', yaxis_title='Inadimplência')
+st.plotly_chart(fig_forecast)
 
-# Comparação com Outras Lojas
-st.subheader('Comparação com Outras Lojas')
+# Comparacao com Outras Lojas
+st.subheader('Comparacão com Outras Lojas')
 lojas = ['Loja A', 'Loja B', 'Loja C', 'Sua Loja']
 inadimplencia_lojas = [10, 12, 8, df['Inadimplência'].mean()]
-
 comparacao_df = pd.DataFrame({'Loja': lojas, 'Inadimplência Média': inadimplencia_lojas})
 
-fig, ax = plt.subplots()
-ax.bar(comparacao_df['Loja'], comparacao_df['Inadimplência Média'], color=['blue', 'blue', 'blue', 'red'])
-ax.set_ylabel('Inadimplência Média')
-ax.set_title('Comparação entre Lojas')
-for i, v in enumerate(inadimplencia_lojas):
-    ax.text(i, v + 0.3, f'{v:.1f}%', ha='center', fontsize=10)
-st.pyplot(fig)
+fig_comparacao = px.bar(comparacao_df, x='Loja', y='Inadimplência Média', color='Loja', title='Comparacão entre Lojas')
+st.plotly_chart(fig_comparacao)
 
 # Conclusão
 st.subheader('Conclusão')
