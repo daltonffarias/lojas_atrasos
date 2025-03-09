@@ -9,35 +9,32 @@ def load_data():
     url = "https://raw.githubusercontent.com/daltonffarias/lojas_atrasos/main/inadimplencia_lojas.csv"
     data = pd.read_csv(url)
     
-    # Exibir as colunas do DataFrame para debug
+    # Exibir as colunas disponíveis para debug
     st.write("Colunas do DataFrame:", data.columns.tolist())
-    
-    # Normalizar os nomes das colunas (remover espaços extras)
-    data.columns = data.columns.str.strip()  # Remove espaços extras no início e fim
-    data.columns = data.columns.str.replace('\xa0', ' ')  # Remove espaços não quebráveis
     
     return data
 
 # Função para calcular a taxa de inadimplência
 def calculate_default_rate(data):
-    # Verificar se a coluna 'Valor Compra (R$)' está presente
-    coluna_valor = "Valor Compra (R$)"
-    if coluna_valor not in data.columns:
-        st.error(f"Erro: A coluna '{coluna_valor}' não foi encontrada.")
-        st.write("Colunas disponíveis:", data.columns.tolist())
-        st.stop()  # Interromper a execução do código
+    coluna_valor = "compra"  # Ajustado conforme os dados carregados
+    coluna_status = "status_pagamento"
     
     total_sales = data[coluna_valor].sum()
-    default_sales = data[data['Status Pagamento'].isin(['Atraso', 'Inadimplente'])][coluna_valor].sum()
+    default_sales = data[data[coluna_status].isin(['Atraso', 'Inadimplente'])][coluna_valor].sum()
     default_rate = (default_sales / total_sales) * 100
+    
     return default_rate
 
 # Função para plotar a distribuição de atraso
 def plot_delay_distribution(data):
+    coluna_atraso = "dias_atraso"
+    coluna_status = "status_pagamento"
+    
     delay_bins = [0, 30, 60, 90, 180, np.inf]
     delay_labels = ['0-30', '31-60', '61-90', '91-180', '180+']
-    data['Dias em Atraso'] = pd.cut(data['Dias em Atraso'], bins=delay_bins, labels=delay_labels)
-    delay_distribution = data[data['Status Pagamento'] == 'Atraso'].groupby('Dias em Atraso').size()
+    
+    data[coluna_atraso] = pd.cut(data[coluna_atraso], bins=delay_bins, labels=delay_labels)
+    delay_distribution = data[data[coluna_status] == 'Atraso'].groupby(coluna_atraso).size()
     
     plt.figure(figsize=(10, 6))
     sns.barplot(x=delay_distribution.index, y=delay_distribution.values)
@@ -48,9 +45,13 @@ def plot_delay_distribution(data):
 
 # Função para analisar o perfil de clientes inadimplentes
 def analyze_default_profile(data):
-    default_customers = data[data['Status Pagamento'] == 'Inadimplente']
-    avg_purchase_value = default_customers['Valor Compra (R$)'].mean()
-    purchase_frequency = default_customers['ID Cliente'].value_counts().mean()
+    coluna_valor = "compra"
+    coluna_cliente = "id_cliente"
+    coluna_status = "status_pagamento"
+    
+    default_customers = data[data[coluna_status] == 'Inadimplente']
+    avg_purchase_value = default_customers[coluna_valor].mean()
+    purchase_frequency = default_customers[coluna_cliente].value_counts().mean()
     
     st.write(f"Valor Médio das Compras: R${avg_purchase_value:.2f}")
     st.write(f"Frequência Média de Compras: {purchase_frequency:.2f}")
