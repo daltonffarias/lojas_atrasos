@@ -9,14 +9,26 @@ def load_data():
     url = "https://raw.githubusercontent.com/daltonffarias/lojas_atrasos/main/inadimplencia_lojas.csv"
     data = pd.read_csv(url)
     
-    st.write("Colunas do DataFrame:", data.columns.tolist())  # Exibir colunas para debug
+    # Exibir as colunas do DataFrame para debug
+    st.write("Colunas do DataFrame:", data.columns.tolist())
+    
+    # Normalizar os nomes das colunas (remover espaços extras)
+    data.columns = data.columns.str.strip()  # Remove espaços extras no início e fim
+    data.columns = data.columns.str.replace('\xa0', ' ')  # Remove espaços não quebráveis
     
     return data
 
 # Função para calcular a taxa de inadimplência
 def calculate_default_rate(data):
-    total_sales = data['Valor Compra (R$)'].sum()
-    default_sales = data[data['Status Pagamento'].isin(['Atraso', 'Inadimplente'])]['Valor Compra (R$)'].sum()
+    # Verificar se a coluna 'Valor Compra (R$)' está presente
+    coluna_valor = "Valor Compra (R$)"
+    if coluna_valor not in data.columns:
+        st.error(f"Erro: A coluna '{coluna_valor}' não foi encontrada.")
+        st.write("Colunas disponíveis:", data.columns.tolist())
+        st.stop()  # Interromper a execução do código
+    
+    total_sales = data[coluna_valor].sum()
+    default_sales = data[data['Status Pagamento'].isin(['Atraso', 'Inadimplente'])][coluna_valor].sum()
     default_rate = (default_sales / total_sales) * 100
     return default_rate
 
