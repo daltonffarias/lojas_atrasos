@@ -1,4 +1,4 @@
-﻿ID Cliente,Data Compra,Compra,Status Pagamento,Dias  Atraso,Loja
+﻿id_cliente,data_compra,compra,status_pagamento,dias_atraso,loja
 1,2025-02-14 12:44:48.155584,3531.45,Em dia,0,Loja E
 2,2024-11-07 12:44:48.155584,2587.73,Em dia,0,Loja C
 3,2025-01-28 12:44:48.155584,704.37,Atraso,30,Loja C
