@@ -34,7 +34,16 @@ X_future = np.array(range(len(df), len(df) + 6)).reshape(-1, 1)
 future_predictions = modelo.predict(X_future)
 
 future_df = pd.DataFrame({'Data': future_dates, 'Inadimplência Estimada': future_predictions})
-st.line_chart(pd.concat([df.set_index('Data'), future_df.set_index('Data')]))
+
+# Melhor visualização com Matplotlib
+fig, ax = plt.subplots()
+ax.plot(df['Data'], df['Inadimplência'], marker='o', label='Histórico', linestyle='-')
+ax.plot(future_df['Data'], future_df['Inadimplência Estimada'], marker='o', linestyle='--', color='red', label='Previsão')
+ax.set_xlabel('Data')
+ax.set_ylabel('Inadimplência')
+ax.set_title('Previsão de Inadimplência')
+ax.legend()
+st.pyplot(fig)
 
 # Comparação com Outras Lojas
 st.subheader('Comparação com Outras Lojas')
@@ -42,7 +51,14 @@ lojas = ['Loja A', 'Loja B', 'Loja C', 'Sua Loja']
 inadimplencia_lojas = [10, 12, 8, df['Inadimplência'].mean()]
 
 comparacao_df = pd.DataFrame({'Loja': lojas, 'Inadimplência Média': inadimplencia_lojas})
-st.bar_chart(comparacao_df.set_index('Loja'))
+
+fig, ax = plt.subplots()
+ax.bar(comparacao_df['Loja'], comparacao_df['Inadimplência Média'], color=['blue', 'blue', 'blue', 'red'])
+ax.set_ylabel('Inadimplência Média')
+ax.set_title('Comparação entre Lojas')
+for i, v in enumerate(inadimplencia_lojas):
+    ax.text(i, v + 0.3, f'{v:.1f}%', ha='center', fontsize=10)
+st.pyplot(fig)
 
 # Conclusão
 st.subheader('Conclusão')
