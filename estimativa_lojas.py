@@ -36,12 +36,12 @@ def plot_delay_distribution(data):
     data[coluna_atraso] = pd.cut(data[coluna_atraso], bins=delay_bins, labels=delay_labels)
     delay_distribution = data[data[coluna_status] == 'Atraso'].groupby(coluna_atraso).size()
     
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=delay_distribution.index, y=delay_distribution.values)
-    plt.title('Distribuição de Atraso por Faixa de Dias')
-    plt.xlabel('Faixa de Dias em Atraso')
-    plt.ylabel('Quantidade de Compras')
-    st.pyplot()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(x=delay_distribution.index, y=delay_distribution.values, ax=ax)
+    ax.set_title('Distribuição de Atraso por Faixa de Dias')
+    ax.set_xlabel('Faixa de Dias em Atraso')
+    ax.set_ylabel('Quantidade de Compras')
+    st.pyplot(fig)
 
 # Função para analisar o perfil de clientes inadimplentes
 def analyze_default_profile(data):
