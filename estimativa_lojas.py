@@ -8,7 +8,9 @@ import seaborn as sns
 def load_data():
     url = "https://raw.githubusercontent.com/daltonffarias/lojas_atrasos/main/inadimplencia_lojas.csv"
     data = pd.read_csv(url)
-    st.write("Colunas do DataFrame:", data.columns.tolist())
+    
+    st.write("Colunas do DataFrame:", data.columns.tolist())  # Exibir colunas para debug
+    
     return data
 
 # Função para calcular a taxa de inadimplência
