@@ -8,7 +8,6 @@ import seaborn as sns
 def load_data():
     url = "https://raw.githubusercontent.com/daltonffarias/lojas_atrasos/main/inadimplencia_lojas.csv"
     data = pd.read_csv(url)
-    data.columns = data.columns.str.strip()
     st.write("Colunas do DataFrame:", data.columns.tolist())
     return data
 
